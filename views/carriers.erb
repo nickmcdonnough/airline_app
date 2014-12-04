@@ -1,0 +1,7 @@
+<h1>Carriers</h1>
+<h3>There are a total of <%= @carrier_count %> carriers in the DB.</h3>
+
+They are:<br />
+<% @carriers.each do |c| %>
+  <%= c['carrier'] %><br>
+<% end %>
