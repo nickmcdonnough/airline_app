@@ -45,4 +45,20 @@ get '/carrier-delayed-arrivals' do
   erb :most_delayed
 end
 
+get '/city-delayed-departures' do
+  sql = %q[
+    SELECT
+      origin_city,
+      COUNT(origin_city)
+      FROM flight_arrivals
+      WHERE departure_delay > 0
+      GROUP BY origin_city
+      ORDER BY count DESC;
+  ]
 
+  db = get_db_connection
+  result = db.exec(sql)
+  @most_delayed = result.entries.first
+  @least_delayed = result.entries.last
+  erb :airport_most_delayed
+end
