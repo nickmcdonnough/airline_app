@@ -1,5 +1,15 @@
 <h1>Questions to Answer</h1>
 
+<form method='post' action='/impossible'>
+  <select name='carrier'>
+    <% @carrier_list.each do |c| %>
+      <option value="<%= c['carrier'] %>"><%= c['carrier'] %></option>
+    <% end %>
+  </select>
+  <input type='submit' value='Show It!'>
+</form>
+
+
 How many different airlines are represented in this dataset? <a href='/carriers'>Go</a><br />
 
 Which airline had the largest quantity of delayed arriving flights? Which had the fewest?  <a href='/carrier-delayed-arrivals'>Go</a><br />

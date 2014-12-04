@@ -10,10 +10,23 @@ helpers do
 end
 
 get '/' do
+  db = get_db_connection
+  @carrier_list = db.get_all_airlines
   erb :index
 end
 
-# how many different airlines are represented?
+post '/impossible' do
+  carrier = params[:carrier]
+  redirect to '/carriers/' + carrier
+end
+
+get '/carriers/:carrier' do
+  db = get_db_connection
+  @info = db.build_carrier_profile params[:carrier]
+  erb :carrier
+end
+
+
 get '/carriers' do
   db = get_db_connection
 

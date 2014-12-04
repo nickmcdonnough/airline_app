@@ -10,7 +10,7 @@ class DB
       SELECT COUNT(DISTINCT carrier) FROM flight_arrivals;
     ]
     result = db.exec(sql)
-    result.entries.first['count']
+    result.entries.first['count'].to_i
   end
 
   def get_all_airlines
@@ -88,6 +88,20 @@ class DB
       FROM flight_arrivals;
     ]
 
+    result = db.exec(sql)
+    result.entries.first
+  end
+
+  def build_carrier_profile carrier
+    sql = %Q[
+      SELECT
+        avg(departure_delay) as avg_dep_delay,
+        avg(arrival_delay) as avg_arr_delay,
+        count(departure_delay) as cnt_dep_delay,
+        count(arrival_delay) as cnt_arr_delay
+      FROM flight_arrivals
+      WHERE carrier = '#{carrier}'
+    ]
     result = db.exec(sql)
     result.entries.first
   end
