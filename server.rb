@@ -42,7 +42,7 @@ get '/carrier-delayed-arrivals' do
   result = db.exec(sql)
   @most_delayed = result.entries.first
   @least_delayed = result.entries.last
-  erb :most_delayed
+  erb :carrier_delayed_arrivals
 end
 
 get '/city-delayed-departures' do
