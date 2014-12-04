@@ -20,12 +20,27 @@ get '/carriers' do
   sql2 = "SELECT DISTINCT carrier FROM flight_arrivals;"
 
   db = get_db_connection
-  p db
   result1 = db.exec(sql1)
   result2 = db.exec(sql2)
-  p result1.entries
-  p result2.entries
   @carrier_count = result1.entries.first['count']
   @carriers = result2.entries
   erb :carriers
+end
+
+get '/delayed-arrivals' do
+  sql = %q[
+    SELECT
+      carrier,
+      COUNT(carrier)
+    FROM flight_arrivals
+    WHERE arrival_delay > 0
+    GROUP BY carrier
+    ORDER BY count DESC;
+  ]
+
+  db = get_db_connection
+  result = db.exec(sql)
+  @most_delayed = result.entries.first
+  @least_delayed = result.entries.last
+  erb :most_delayed
 end
