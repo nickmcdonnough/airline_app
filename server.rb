@@ -1,10 +1,11 @@
 require 'sinatra'
 require 'sinatra/reloader'
 require 'pg'
+require './lib/db'
 
 helpers do
   def get_db_connection
-    PG.connect(host: 'localhost', dbname:'atx_data')
+    DB.new
   end
 end
 
@@ -14,100 +15,48 @@ end
 
 # how many different airlines are represented?
 get '/carriers' do
-  sql1 = %q[
-    SELECT COUNT(DISTINCT carrier) FROM flight_arrivals;
-  ]
-  sql2 = "SELECT DISTINCT carrier FROM flight_arrivals;"
-
   db = get_db_connection
-  result1 = db.exec(sql1)
-  result2 = db.exec(sql2)
-  @carrier_count = result1.entries.first['count']
-  @carriers = result2.entries
+
+  @carrier_count = db.get_airline_count
+  @carriers = db.get_all_airlines
   erb :carriers
 end
 
 get '/carrier-delayed-arrivals' do
-  sql = %q[
-    SELECT
-      carrier,
-      COUNT(carrier)
-    FROM flight_arrivals
-    WHERE arrival_delay > 0
-    GROUP BY carrier
-    ORDER BY count DESC;
-  ]
-
   db = get_db_connection
-  result = db.exec(sql)
-  @most_delayed = result.entries.first
-  @least_delayed = result.entries.last
+  delays = db.get_carrier_delayed_arrivals
+
+  @most_delayed = delays.first
+  @least_delayed = delays.last
   erb :carrier_delayed_arrivals
 end
 
 get '/city-delayed-departures' do
-  sql = %q[
-    SELECT
-      origin_city,
-      COUNT(origin_city)
-      FROM flight_arrivals
-      WHERE departure_delay > 0
-      GROUP BY origin_city
-      ORDER BY count DESC;
-  ]
-
   db = get_db_connection
-  result = db.exec(sql)
-  @most_delayed = result.entries.first
-  @least_delayed = result.entries.last
+  delays = db.get_city_delayed_departures
+
+  @most_delayed = delays.first
+  @least_delayed = delays.last
   erb :city_most_delayed_deps
 end
 
 get '/city-delayed-arrivals' do
-  sql = %q[
-    SELECT
-      origin_city,
-      COUNT(origin_city)
-      FROM flight_arrivals
-      WHERE arrival_delay > 0
-      GROUP BY origin_city
-      ORDER BY count DESC;
-  ]
-
   db = get_db_connection
-  result = db.exec(sql)
-  @most_delayed = result.entries.first
-  @least_delayed = result.entries.last
+  delays = db.get_city_delayed_arrivals
+
+  @most_delayed = delays.first
+  @least_delayed = delays.last
   erb :city_most_delayed_arrivals
 end
 
 get '/carrier-average-lateness' do
-  sql = %q[
-    SELECT
-      carrier,
-      AVG(departure_delay) as departure,
-      AVG(arrival_delay) as arrival
-    FROM flight_arrivals
-    GROUP BY carrier
-    ORDER BY carrier ASC;
-  ]
-
   db = get_db_connection
-  result = db.exec(sql)
-  @averages = result.entries
+  @averages = db.get_carrier_average_lateness
   erb :carrier_average_lateness
 end
 
 get '/overall-lateness' do
-  sql = %[
-    SELECT
-      AVG(departure_delay) as departure,
-      AVG(arrival_delay) as arrival
-    FROM flight_arrivals;
-  ]
-
   db = get_db_connection
-  result = db.exec(sql)
-  @overall = result.entries.first
+  @overall = db.get_overall_lateness
   erb :overall_lateness
 end
