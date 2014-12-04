@@ -27,7 +27,7 @@ get '/carriers' do
   erb :carriers
 end
 
-get '/delayed-arrivals' do
+get '/carrier-delayed-arrivals' do
   sql = %q[
     SELECT
       carrier,
@@ -44,3 +44,5 @@ get '/delayed-arrivals' do
   @least_delayed = result.entries.last
   erb :most_delayed
 end
+
+
