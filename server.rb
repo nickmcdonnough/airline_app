@@ -97,3 +97,17 @@ get '/carrier-average-lateness' do
   @averages = result.entries
   erb :carrier_average_lateness
 end
+
+get '/overall-lateness' do
+  sql = %[
+    SELECT
+      AVG(departure_delay) as departure,
+      AVG(arrival_delay) as arrival
+    FROM flight_arrivals;
+  ]
+
+  db = get_db_connection
+  result = db.exec(sql)
+  @overall = result.entries.first
+  erb :overall_lateness
+end
