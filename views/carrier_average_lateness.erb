@@ -1,0 +1,23 @@
+<h1>Average Lateness for All Carriers</h1>
+
+<style>
+  table, th, td {
+    border: 1px solid black;
+    text-align: center;
+  }
+</style>
+
+<table>
+  <tr>
+    <th>Carrier</th>
+    <th>Avg Dep.</th>
+    <th>Avg Arr.</th>
+  </tr>
+  <% @averages.each do |avg| %>
+  <tr>
+    <td><%= avg['carrier'] %></td>
+    <td><%= avg['departure'].to_f.round(2) %></td>
+    <td><%= avg['arrival'].to_f.round(2) %></td>
+  </tr>
+  <% end %>
+</table>

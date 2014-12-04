@@ -81,3 +81,19 @@ get '/city-delayed-arrivals' do
   erb :city_most_delayed_arrivals
 end
 
+get '/carrier-average-lateness' do
+  sql = %q[
+    SELECT
+      carrier,
+      AVG(departure_delay) as departure,
+      AVG(arrival_delay) as arrival
+    FROM flight_arrivals
+    GROUP BY carrier
+    ORDER BY carrier ASC;
+  ]
+
+  db = get_db_connection
+  result = db.exec(sql)
+  @averages = result.entries
+  erb :carrier_average_lateness
+end
